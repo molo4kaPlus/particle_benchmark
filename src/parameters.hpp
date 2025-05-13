@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 const int g_windowWidth = 800;
 const int g_windowHeight = 600;

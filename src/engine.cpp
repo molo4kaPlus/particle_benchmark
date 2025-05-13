@@ -2,20 +2,19 @@
 
 std::string g_windowName = "test";
 
-static sf::Color getColor(float t) {
-    const float r = sin(t);
-    const float g = sin(t + 0.33f * 2.0f * M_PI);
-    const float b = sin(t + 0.66f * 2.0f * M_PI);
-    return {static_cast<uint8_t>(255.0f * r * r),
-            static_cast<uint8_t>(255.0f * g * g),
-            static_cast<uint8_t>(255.0f * b * b)};
-}
-
 engine::engine()
     :window(sf::VideoMode(g_windowWidth, g_windowHeight), g_windowName)
 {
     timer.restart();
     window.setFramerateLimit(g_fpsLimit);
+    if (!font.loadFromFile("Arial.ttf")) {
+        cout << "[SFML]: Could not load font!" << endl;
+        window.close();
+    }
+    infoText.setFont(font);
+    infoText.setCharacterSize(20); 
+    infoText.setFillColor(sf::Color::White);
+    infoText.setPosition(10, 10); 
 }
 
 void engine::mainLoop()
@@ -40,17 +39,11 @@ void engine::handleEvents()
 
 void engine::update()
 {
-    float cTime = timer.getElapsedTime().asSeconds();
-
     if (particleCount < g_maximumParticles)
     {
-        objects.push_back(particle(
-            sf::Vector2f{100.f, 300.f},    
-            sf::Vector2f{-1.f, 1.f}, 
-            sf::Vector2f{0.f, 0.f},
-            g_particleRadius,                  
-            getColor(frameCount/100)
-        ));
+        createParticle(objects, frameCount);
+        createParticle(objects, frameCount);
+        particleCount++;
         particleCount++;
     }
 
@@ -76,6 +69,10 @@ void engine::render()
         shape.setFillColor(obj.color);
         window.draw(shape);
     }
+    // Обновление и отрисовка текста
+    infoText.setString("Particles: " + std::to_string(particleCount) + 
+                      "\nFPS: " + std::to_string(static_cast<int>(1.f / timer.restart().asSeconds())));
+    window.draw(infoText);
     // 
     window.display();
     frameCount++;

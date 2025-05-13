@@ -6,12 +6,32 @@
 
 using namespace std;
 
+static sf::Color getColor(float t) {
+    const float r = sin(t);
+    const float g = sin(t + 0.33f * 2.0f * M_PI);
+    const float b = sin(t + 0.66f * 2.0f * M_PI);
+    return {static_cast<uint8_t>(255.0f * r * r),
+            static_cast<uint8_t>(255.0f * g * g),
+            static_cast<uint8_t>(255.0f * b * b)};
+}
+
 inline void applyGravity(vector<particle> &objects)
 {
     for(auto& obj : objects)
     {
         obj.acceleration += GRAVITY;
     }
+}
+
+inline void createParticle(vector<particle> &objects, int &frameCount)
+{
+    objects.push_back(particle(
+            sf::Vector2f{100.f, 200.f},    
+            sf::Vector2f{0.1f, 0.1f}, 
+            sf::Vector2f{0.f, 0.f},
+            g_particleRadius,                  
+            getColor(frameCount/100)
+        ));
 }
 
 inline void checkBorders(vector<particle> &objects)
