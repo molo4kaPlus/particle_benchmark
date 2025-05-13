@@ -19,11 +19,36 @@ engine::engine()
 
 void engine::mainLoop()
 {
+    if (g_runBenchmark) {
+        isBenchmarkRunning = true;
+        benchmarkFrameCount = 0;
+        physicsTimeSum = 0;
+        renderTimeSum = 0;
+        fpsSum = 0;
+    }
+
     while (window.isOpen())
     {
         handleEvents();
         update();
         render();
+        
+        if (isBenchmarkRunning) {
+            physicsTimeSum += physicsTime/1000.f;
+            renderTimeSum += renderTime/1000.f;
+            fpsSum += 1.f / timer.getElapsedTime().asSeconds();
+            benchmarkFrameCount++;
+            
+            if (benchmarkFrameCount >= g_benchmarkFrames) {
+                benchmarkData.particleCount = particleCount;
+                benchmarkData.avgPhysicsTime = physicsTimeSum / benchmarkFrameCount;
+                benchmarkData.avgRenderTime = renderTimeSum / benchmarkFrameCount;
+                benchmarkData.avgFPS = fpsSum / benchmarkFrameCount;
+                
+                saveBenchmarkResults();
+                window.close();
+            }
+        }
     }
 }
 
@@ -87,7 +112,35 @@ void engine::render()
     window.draw(infoText);
     window.display();
     frameCount++;
-    
+
     //
     renderTime = pipeTimer.getElapsedTime().asMicroseconds();
+}
+
+void engine::saveBenchmarkResults() {
+    // Проверяем существование файла (кросс-платформенный способ)
+    bool fileExists = false;
+    std::ifstream infile("benchmark_results.csv");
+    fileExists = infile.good();
+    infile.close();
+
+    std::ofstream file("benchmark_results.csv", std::ios::app);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open benchmark results file!" << std::endl;
+        return;
+    }
+
+    // Добавляем заголовок только если файл не существовал
+    if (!fileExists) {
+        file << "Mode,Particles,Avg Physics (ms),Avg Render (ms),Avg FPS\n";
+    }
+
+    file << benchmarkData.mode << ","
+         << benchmarkData.particleCount << ","
+         << benchmarkData.avgPhysicsTime << ","
+         << benchmarkData.avgRenderTime << ","
+         << benchmarkData.avgFPS << "\n";
+    
+    file.close();
+    std::cout << "Benchmark results saved to benchmark_results.csv" << std::endl;
 }

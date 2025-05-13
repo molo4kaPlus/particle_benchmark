@@ -3,6 +3,7 @@
 #include "parameters.hpp"
 
 #include "updateOpenMP.cpp"
+//#include "updateST.cpp"
 
 using namespace std;
 
@@ -22,9 +23,17 @@ private:
 
     vector<particle> objects;
 
+    BenchmarkResult benchmarkData;
+    bool isBenchmarkRunning = false;
+    int benchmarkFrameCount = 0;
+    float physicsTimeSum = 0;
+    float renderTimeSum = 0;
+    float fpsSum = 0;
+
     void handleEvents();
     void update();
     void render();
+    void saveBenchmarkResults();
 
 public:
     engine();

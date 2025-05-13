@@ -39,7 +39,9 @@ if(WIN32)
 
     add_custom_command(
         TARGET particle
-        COMMENT "Copy Arial font"
+        COMMENT "Copy Arial font" 
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/fonts/Arial.ttf $<TARGET_FILE_DIR:particle>
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/scripts/bench.bat $<TARGET_FILE_DIR:particle>
         VERBATIM)
 endif()
+
