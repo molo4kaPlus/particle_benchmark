@@ -1,6 +1,7 @@
-#include <SFML/Main.hpp>
+#include "engine.hpp"
 
 int main()
 {
-    return 0;
+    engine engine;
+    engine.mainLoop();
 }
