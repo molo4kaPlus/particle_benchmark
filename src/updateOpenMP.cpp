@@ -36,7 +36,6 @@ inline void createParticle(vector<particle> &objects, int &frameCount)
 
 inline void checkBorders(vector<particle> &objects)
 {
-    #pragma omp parallel for
     for(auto& obj : objects)
     {
         obj.velocity += obj.acceleration;

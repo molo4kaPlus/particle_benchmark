@@ -67,7 +67,7 @@ void engine::render()
     shape.setFillColor(sf::Color::Blue);
 
     window.clear(sf::Color::Black);
-    // actual render here
+    // obj render
     for(const auto& obj : objects)
     {
         shape.setRadius(obj.radius);
@@ -75,7 +75,7 @@ void engine::render()
         shape.setFillColor(obj.color);
         window.draw(shape);
     }
-    // Обновление и отрисовка текста
+    // text render
     std::stringstream ss;
     ss << std::fixed << std::setprecision(1)
     << "Particles: " << particleCount << "\n"
@@ -87,6 +87,7 @@ void engine::render()
     window.draw(infoText);
     window.display();
     frameCount++;
-
+    
+    //
     renderTime = pipeTimer.getElapsedTime().asMicroseconds();
 }
