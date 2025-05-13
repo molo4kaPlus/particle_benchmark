@@ -2,11 +2,20 @@
 
 std::string g_windowName = "test";
 
+static sf::Color getColor(float t) {
+    const float r = sin(t);
+    const float g = sin(t + 0.33f * 2.0f * M_PI);
+    const float b = sin(t + 0.66f * 2.0f * M_PI);
+    return {static_cast<uint8_t>(255.0f * r * r),
+            static_cast<uint8_t>(255.0f * g * g),
+            static_cast<uint8_t>(255.0f * b * b)};
+}
+
 engine::engine()
     :window(sf::VideoMode(g_windowWidth, g_windowHeight), g_windowName)
 {
     timer.restart();
-    window.setFramerateLimit(30);
+    window.setFramerateLimit(g_fpsLimit);
 }
 
 void engine::mainLoop()
@@ -31,31 +40,43 @@ void engine::handleEvents()
 
 void engine::update()
 {
-    checkBorders(objects);
-    checkCollisions(objects);
-    
-    objects.push_back(particle(
-    sf::Vector2f{100.f, 300.f},   // Позиция
-    sf::Vector2f{50.f, 100.f},    // Начальная скорость (вверх)
-    sf::Vector2f{0.f, 0.f},       // Начальное ускорение
-    10.f                          // Радиус
-    ));
+    float cTime = timer.getElapsedTime().asSeconds();
+
+    if (particleCount < g_maximumParticles)
+    {
+        objects.push_back(particle(
+            sf::Vector2f{100.f, 300.f},    
+            sf::Vector2f{-1.f, 1.f}, 
+            sf::Vector2f{0.f, 0.f},
+            g_particleRadius,                  
+            getColor(frameCount/100)
+        ));
+        particleCount++;
+    }
+
+    applyGravity(objects);
+    for (int i = 0; i < g_collisionCheckCount; i++)
+    {
+        checkBorders(objects);
+        checkCollisions(objects);
+    }
 }
 
 void engine::render()
 {
-    // setting up the circle that will be rendered thouthands of times!
     sf::CircleShape shape(30.f);
     shape.setFillColor(sf::Color::Blue);
 
     window.clear(sf::Color::Black);
     // actual render here
-    for(particle obj : objects)
+    for(const auto& obj : objects)
     {
         shape.setRadius(obj.radius);
-        shape.setPosition(obj.position);
+        shape.setPosition(obj.position.x - obj.radius, obj.position.y - obj.radius);
+        shape.setFillColor(obj.color);
         window.draw(shape);
     }
     // 
     window.display();
+    frameCount++;
 }

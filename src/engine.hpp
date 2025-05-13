@@ -11,7 +11,10 @@ class engine
 private:
     sf::RenderWindow window;
     sf::Clock timer;
-    
+
+    int particleCount = 0;
+    int frameCount = 0;
+
     vector<particle> objects;
 
     void handleEvents();
