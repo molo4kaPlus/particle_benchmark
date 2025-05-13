@@ -9,6 +9,8 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 const int g_windowWidth = 800;
 const int g_windowHeight = 600;

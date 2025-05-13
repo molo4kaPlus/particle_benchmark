@@ -39,6 +39,8 @@ void engine::handleEvents()
 
 void engine::update()
 {
+    pipeTimer.restart();
+
     if (particleCount < g_maximumParticles)
     {
         createParticle(objects, frameCount);
@@ -53,10 +55,14 @@ void engine::update()
         checkBorders(objects);
         checkCollisions(objects);
     }
+
+    physicsTime = pipeTimer.getElapsedTime().asMicroseconds();
 }
 
 void engine::render()
 {
+    pipeTimer.restart();
+
     sf::CircleShape shape(30.f);
     shape.setFillColor(sf::Color::Blue);
 
@@ -70,10 +76,17 @@ void engine::render()
         window.draw(shape);
     }
     // Обновление и отрисовка текста
-    infoText.setString("Particles: " + std::to_string(particleCount) + 
-                      "\nFPS: " + std::to_string(static_cast<int>(1.f / timer.restart().asSeconds())));
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(1)
+    << "Particles: " << particleCount << "\n"
+    << "FPS: " << (1.f / timer.restart().asSeconds()) << "\n"  // Убрали static_cast<int>
+    << "Physics: " << physicsTime/1000 << "ms\n"
+    << "Render: " << renderTime/1000 << "ms";
+
+    infoText.setString(ss.str());
     window.draw(infoText);
-    // 
     window.display();
     frameCount++;
+
+    renderTime = pipeTimer.getElapsedTime().asMicroseconds();
 }
