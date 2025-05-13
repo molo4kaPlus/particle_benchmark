@@ -1,14 +1,18 @@
 #pragma once
 
-#include <SFML/Window.hpp>
-#include <string>
+#include "parameters.hpp"
+
+#include "updateST.cpp"
 
 using namespace std;
 
 class engine
 {
 private:
-    sf::Window window;
+    sf::RenderWindow window;
+    sf::Clock timer;
+    
+    vector<particle> objects;
 
     void handleEvents();
     void update();
