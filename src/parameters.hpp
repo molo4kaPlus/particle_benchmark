@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "particle.hpp"
-#include "benchData.hpp"
+//#include "benchmark.cpp"
 
 #include <string>
 #include <vector>
@@ -13,6 +13,9 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+
+#define OMP
+#define BENCH
 
 const int g_windowWidth = 800;
 const int g_windowHeight = 600;
@@ -27,4 +30,5 @@ const float g_damp = 0.75f;
 const sf::Vector2f GRAVITY(0.f, 0.07f);
 
 const int g_benchmarkFrames = 1000; 
-const bool g_runBenchmark = true;   
+const std::string g_benchResultFileName = "results.csv"; 
+  
