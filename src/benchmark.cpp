@@ -93,11 +93,12 @@ struct Benchmark {
         }
 
         if (!fileExists) {
-            file << "Mode,Particles,Avg Physics (ms),Avg Render (ms),Avg FPS,Total Time (s)\n";
+            file << "Mode,Particles,CollisionChecks,Avg Physics (ms),Avg Render (ms),AVGfps,Total Time (s)\n";
         }
 
         file << mode << ","
             << particleCount << ","
+            << g_collisionCheckCount << ","
             << avgPhysicsTime << ","
             << avgRenderTime << ","
             << avgFPS << ","
