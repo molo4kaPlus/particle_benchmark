@@ -69,7 +69,7 @@ inline void checkBorders(vector<particle> &objects)
 
 inline void checkCollisions(vector<particle> &objects)
 {
-    #pragma omp parallel for
+    #pragma omp parallel for schedule(dynamic)
     for(size_t i = 0; i < objects.size(); ++i)
     {
         for(size_t j = i + 1; j < objects.size(); ++j)
