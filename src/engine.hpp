@@ -26,6 +26,9 @@ private:
 
     vector<particle> objects;
 
+    bool isAttracting = false;
+    sf::Vector2f attractionPoint;
+
 public:
     engine();
     void handleEvents();

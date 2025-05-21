@@ -25,11 +25,14 @@ const int g_fpsLimit = 120;
 
 const int g_maximumParticles = 1000;
 const float g_particleRadius = 5.f;
-const int g_collisionCheckCount = 15;
+const int g_collisionCheckCount = 20;
 
 const float g_particleCollisionStrength = 1.55f;
 const float g_damp = 0.75f;
 const sf::Vector2f GRAVITY(0.f, 0.07f);
+
+const float g_attractionForce = 0.3f; 
+const float g_attractionRadius = 200.f; 
 
 const int g_benchmarkFrames = 1000; 
 const std::string g_benchResultFileName = "results.csv"; 

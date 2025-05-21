@@ -105,3 +105,22 @@ inline void checkCollisions(vector<particle> &objects)
         }
     }
 }
+
+inline void applyAttraction(vector<particle> &objects, const sf::Vector2f& point, bool isActive, float force, float radius)
+{
+    if (!isActive) return;
+
+    for (auto& obj : objects)
+    {
+        sf::Vector2f delta = point - obj.position;
+        float distanceSquared = delta.x * delta.x + delta.y * delta.y;
+        
+        if (distanceSquared < radius * radius && distanceSquared > 10.f) // 10.f - минимальное расстояние, чтобы избежать деления на 0
+        {
+            float distance = fastSqrt(distanceSquared); // или sqrt для ST версии
+            sf::Vector2f direction = delta / distance;
+            float strength = force * (1.f - distance / radius); // Сила уменьшается с расстоянием
+            obj.velocity += direction * strength;
+        }
+    }
+}

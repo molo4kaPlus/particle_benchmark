@@ -48,6 +48,20 @@ void engine::handleEvents()
                 loadState(g_saveFileName);
             }
         }
+        else if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.mouseButton.button == sf::Mouse::Middle) {
+                isAttracting = true;
+                attractionPoint = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
+            }
+        }
+        else if (event.type == sf::Event::MouseButtonReleased) {
+            if (event.mouseButton.button == sf::Mouse::Middle) {
+                isAttracting = false;
+            }
+        }
+        else if (event.type == sf::Event::MouseMoved && isAttracting) {
+            attractionPoint = sf::Vector2f(event.mouseMove.x, event.mouseMove.y);
+        }
     }
 }
 
@@ -64,6 +78,8 @@ void engine::update()
     }
 
     applyGravity(objects);
+    applyAttraction(objects, attractionPoint, isAttracting, g_attractionForce, g_attractionRadius);
+    
     for (int i = 0; i < g_collisionCheckCount; i++)
     {
         checkBorders(objects);
