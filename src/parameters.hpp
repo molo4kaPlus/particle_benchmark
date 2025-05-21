@@ -6,6 +6,8 @@
 #include "particle.hpp"
 //#include "benchmark.cpp"
 
+#include "qsqrt.cpp"
+
 #include <string>
 #include <vector>
 #include <cmath>

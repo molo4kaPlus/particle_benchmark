@@ -83,9 +83,9 @@ inline void checkCollisions(vector<particle> &objects)
             float minDistanceSquared = minDistance * minDistance;
             
             
-            if(distanceSquared < minDistanceSquared && distanceSquared > 0.001f)
+            if(distanceSquared < minDistanceSquared && distanceSquared > 0.000001f)
             {
-                float distance = sqrt(distanceSquared);
+                float distance = fastSqrt(distanceSquared);
 
                 sf::Vector2f normal = delta / distance;
                 
