@@ -36,4 +36,6 @@ public:
     float getPhysicsTime() const { return physicsTime; }
     float getRenderTime() const { return renderTime; }
     int getParticleCount() const { return particleCount; }
+    void saveState(const std::string& filename);
+    void loadState(const std::string& filename);
 };

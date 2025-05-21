@@ -14,8 +14,8 @@
 #include <iomanip>
 #include <fstream>
 
-#define NO_OMP
-#define BENCH
+#define OMP
+#define NO_BENCH
 
 const int g_windowWidth = 800;
 const int g_windowHeight = 600;
@@ -31,4 +31,5 @@ const sf::Vector2f GRAVITY(0.f, 0.07f);
 
 const int g_benchmarkFrames = 1000; 
 const std::string g_benchResultFileName = "results.csv"; 
+const std::string g_saveFileName = "particles_state.bin";
   

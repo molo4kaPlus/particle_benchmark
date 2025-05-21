@@ -39,7 +39,15 @@ void engine::handleEvents()
     while (window.pollEvent(event))
     {
         if (event.type == sf::Event::Closed)
-        window.close();
+            window.close();
+        else if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::S) {
+                saveState(g_saveFileName);
+            }
+            else if (event.key.code == sf::Keyboard::L) {
+                loadState(g_saveFileName);
+            }
+        }
     }
 }
 
@@ -103,4 +111,55 @@ void engine::render()
     frameCount++;
 
     renderTime = pipeTimer.getElapsedTime().asMicroseconds();
+}
+
+void engine::saveState(const std::string& filename) {
+    std::ofstream file(filename, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file for saving: " << filename << std::endl;
+        return;
+    }
+
+    size_t count = objects.size();
+    file.write(reinterpret_cast<const char*>(&count), sizeof(count));
+
+    for (const auto& p : objects) {
+        file.write(reinterpret_cast<const char*>(&p.position), sizeof(p.position));
+        file.write(reinterpret_cast<const char*>(&p.velocity), sizeof(p.velocity));
+        file.write(reinterpret_cast<const char*>(&p.acceleration), sizeof(p.acceleration));
+        file.write(reinterpret_cast<const char*>(&p.radius), sizeof(p.radius));
+        file.write(reinterpret_cast<const char*>(&p.color), sizeof(p.color));
+    }
+
+    file.close();
+    std::cout << "State saved to " << filename << std::endl;
+}
+
+void engine::loadState(const std::string& filename) {
+    std::ifstream file(filename, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file for loading: " << filename << std::endl;
+        return;
+    }
+
+    objects.clear();
+    particleCount = 0;
+
+    size_t count;
+    file.read(reinterpret_cast<char*>(&count), sizeof(count));
+
+    for (size_t i = 0; i < count; ++i) {
+        particle p({0,0}, {0,0}, {0,0}, 0, sf::Color::White);
+        file.read(reinterpret_cast<char*>(&p.position), sizeof(p.position));
+        file.read(reinterpret_cast<char*>(&p.velocity), sizeof(p.velocity));
+        file.read(reinterpret_cast<char*>(&p.acceleration), sizeof(p.acceleration));
+        file.read(reinterpret_cast<char*>(&p.radius), sizeof(p.radius));
+        file.read(reinterpret_cast<char*>(&p.color), sizeof(p.color));
+
+        objects.push_back(p);
+        particleCount++;
+    }
+
+    file.close();
+    std::cout << "State loaded from " << filename << std::endl;
 }
