@@ -5,7 +5,6 @@
 
 #include "particle.hpp"
 //#include "benchmark.cpp"
-
 #include "qsqrt.cpp"
 
 #include <string>
@@ -17,7 +16,6 @@
 #include <fstream>
 
 #define OMP
-#define NO_BENCH
 
 const int g_windowWidth = 800;
 const int g_windowHeight = 600;
@@ -29,7 +27,6 @@ const int g_collisionCheckCount = 20;
 
 const float g_particleCollisionStrength = 1.55f;
 const float g_damp = 0.75f;
-const sf::Vector2f GRAVITY(0.f, 0.07f);
 
 const float g_attractionForce = 0.3f; 
 const float g_attractionRadius = 200.f; 

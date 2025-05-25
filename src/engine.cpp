@@ -1,5 +1,5 @@
 #include "engine.hpp"
-#include "benchmark.cpp"
+
 
 std::string g_windowName = "test";
 
@@ -47,6 +47,21 @@ void engine::handleEvents()
             else if (event.key.code == sf::Keyboard::L) {
                 loadState(g_saveFileName);
             }
+            else if (event.key.code == sf::Keyboard::Up) {
+                GRAVITY = sf::Vector2f(0.f, -0.04f);
+            }
+            else if (event.key.code == sf::Keyboard::Down) {
+                GRAVITY = sf::Vector2f(0.f, 0.04f);
+            }
+            else if (event.key.code == sf::Keyboard::Left) {
+                GRAVITY = sf::Vector2f(-0.04f, 0.f);
+            }
+            else if (event.key.code == sf::Keyboard::Right) {
+                GRAVITY = sf::Vector2f(0.04f, 0.f);
+            }
+            if (event.key.code == sf::Keyboard::Space) { 
+                isSimulationRunning = !isSimulationRunning; 
+            }
         }
         else if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Middle) {
@@ -69,6 +84,11 @@ void engine::update()
 {
     pipeTimer.restart();
 
+    if (!isSimulationRunning) {
+        physicsTime = pipeTimer.getElapsedTime().asMicroseconds();
+        return; 
+    }
+
     if (particleCount < g_maximumParticles)
     {
         createParticle(objects, frameCount);
@@ -77,7 +97,7 @@ void engine::update()
         particleCount++;
     }
 
-    applyGravity(objects);
+    applyGravity(objects, GRAVITY);
     applyAttraction(objects, attractionPoint, isAttracting, g_attractionForce, g_attractionRadius);
     
     for (int i = 0; i < g_collisionCheckCount; i++)

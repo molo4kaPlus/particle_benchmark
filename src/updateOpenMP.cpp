@@ -15,7 +15,7 @@ static sf::Color getColor(float t) {
             static_cast<uint8_t>(255.0f * b * b)};
 }
 
-inline void applyGravity(vector<particle> &objects)
+inline void applyGravity(vector<particle> &objects, sf::Vector2f GRAVITY)
 {
     for(auto& obj : objects)
     {

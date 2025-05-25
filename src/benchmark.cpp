@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 #include "parameters.hpp"
@@ -15,7 +16,8 @@ struct Benchmark {
     float avgRenderTime;            
     float avgFPS;                   
     float totalTime;                
-    int particleCount;              
+    int particleCount;  
+    int frames = 0;            
     sf::Clock benchClock;
     sf::Clock frameClock;
     string mode;           

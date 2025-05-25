@@ -1,6 +1,7 @@
 #pragma once
 
 #include "parameters.hpp"
+//#include "benchmark.cpp"
 
 #ifdef OMP
     #include "updateOpenMP.cpp"
@@ -27,7 +28,10 @@ private:
     vector<particle> objects;
 
     bool isAttracting = false;
+    bool isSimulationRunning = true;
+    bool isBenchmarkRunning = false;
     sf::Vector2f attractionPoint;
+    sf::Vector2f GRAVITY = sf::Vector2f(0.f, 0.04f);
 
 public:
     engine();
