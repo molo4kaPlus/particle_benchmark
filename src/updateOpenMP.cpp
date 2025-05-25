@@ -18,6 +18,7 @@ static sf::Color getColor(float t) {
 
 inline void applyGravity(vector<particle> &objects, sf::Vector2f GRAVITY)
 {
+    #pragma omp parallel for schedule(dynamic) 
     for(auto& obj : objects)
     {
         obj.acceleration += GRAVITY;
@@ -44,23 +45,23 @@ inline void checkBorders(vector<particle> &objects)
         
         obj.acceleration = {0.f, 0.f};
         
-        if (obj.position.y + obj.radius > g_windowHeight) // down
+        if (obj.position.y + obj.radius > g_windowHeight) // вниз
         {
             obj.position.y = g_windowHeight - obj.radius;
             obj.velocity.y *= -g_damp;
             if(abs(obj.velocity.y) < 0.2f) obj.velocity.y = -0.2f;
         }
-        if (obj.position.y - obj.radius < 0) // up
+        if (obj.position.y - obj.radius < 0) // вверх
         {
             obj.position.y = obj.radius;
             obj.velocity.y *= -g_damp;
         }
-        if (obj.position.x + obj.radius > g_windowWidth) // right
+        if (obj.position.x + obj.radius > g_windowWidth) // вправо
         {
             obj.position.x = g_windowWidth - obj.radius;
             obj.velocity.x *= -g_damp;
         }
-        if (obj.position.x - obj.radius < 0) // left
+        if (obj.position.x - obj.radius < 0) // влево
         {
             obj.position.x = obj.radius;
             obj.velocity.x *= -g_damp;
@@ -117,7 +118,8 @@ inline void checkCollisions(vector<particle> &objects, SpatialGrid& grid)
 inline void applyAttraction(vector<particle> &objects, const sf::Vector2f& point, bool isActive, float force, float radius)
 {
     if (!isActive) return;
-
+    
+    #pragma omp parallel for schedule(dynamic) 
     for (auto& obj : objects)
     {
         sf::Vector2f delta = point - obj.position;
