@@ -29,6 +29,7 @@ struct Benchmark {
         #else
             mode = "ST";
         #endif
+        engine.clearParticles();
         benchClock.restart();
         int frames = 0;
         

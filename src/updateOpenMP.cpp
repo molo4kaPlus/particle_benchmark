@@ -1,5 +1,6 @@
 #include "particle.hpp"
 #include "parameters.hpp"
+#include "grid.hpp"
 #include <vector>
 
 #include <omp.h>
@@ -67,23 +68,30 @@ inline void checkBorders(vector<particle> &objects)
     }
 }
 
-inline void checkCollisions(vector<particle> &objects)
+inline void checkCollisions(vector<particle> &objects, SpatialGrid& grid)
 {
-    #pragma omp parallel for schedule(dynamic)
+    grid.clear();
+    for (auto& obj : objects) {
+        grid.insert(obj);
+    }
+
+    #pragma omp parallel for schedule(dynamic) 
     for(size_t i = 0; i < objects.size(); ++i)
     {
-        for(size_t j = i + 1; j < objects.size(); ++j)
+        particle &a = objects[i];
+        auto nearbyParticles = grid.getNearbyParticles(a);
+        
+        for(particle* bPtr : nearbyParticles)
         {
-            particle &a = objects[i];
-            particle &b = objects[j];
+            if (bPtr <= &a) continue;
             
+            particle &b = *bPtr;
             sf::Vector2f delta = b.position - a.position;
             float distanceSquared = delta.x * delta.x + delta.y * delta.y;
             float minDistance = a.radius + b.radius;
             float minDistanceSquared = minDistance * minDistance;
             
-            
-            if(distanceSquared < minDistanceSquared && distanceSquared > 0.000001f)
+            if(distanceSquared < minDistanceSquared && distanceSquared > 0.1f)
             {
                 float distance = fastSqrt(distanceSquared);
 
@@ -115,11 +123,11 @@ inline void applyAttraction(vector<particle> &objects, const sf::Vector2f& point
         sf::Vector2f delta = point - obj.position;
         float distanceSquared = delta.x * delta.x + delta.y * delta.y;
         
-        if (distanceSquared < radius * radius && distanceSquared > 10.f) // 10.f - минимальное расстояние, чтобы избежать деления на 0
+        if (distanceSquared < radius * radius && distanceSquared > 10.f) 
         {
-            float distance = fastSqrt(distanceSquared); // или sqrt для ST версии
+            float distance = fastSqrt(distanceSquared); 
             sf::Vector2f direction = delta / distance;
-            float strength = force * (1.f - distance / radius); // Сила уменьшается с расстоянием
+            float strength = force * (1.f - distance / radius); 
             obj.velocity += direction * strength;
         }
     }

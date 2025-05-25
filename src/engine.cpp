@@ -1,10 +1,11 @@
 #include "engine.hpp"
-
+#include "benchmark.cpp"
 
 std::string g_windowName = "test";
 
 engine::engine()
-    :window(sf::VideoMode(g_windowWidth, g_windowHeight), g_windowName)
+    :window(sf::VideoMode(g_windowWidth, g_windowHeight), g_windowName),
+    spatialGrid(1.5f * g_particleRadius, g_windowWidth, g_windowHeight)
 {
     timer.restart();
     window.setFramerateLimit(g_fpsLimit);
@@ -20,17 +21,12 @@ engine::engine()
 
 void engine::mainLoop()
 {
-    #ifdef BENCH
-        Benchmark benchmark;
-        benchmark.executeBenchmark(*this, window);
-    #else
-        while (window.isOpen())
-        {
-            handleEvents();
-            update();
-            render();
-        }
-    #endif
+    while (window.isOpen())
+    {
+        handleEvents();
+        update();
+        render();
+    }
 }
 
 void engine::handleEvents()
@@ -48,16 +44,20 @@ void engine::handleEvents()
                 loadState(g_saveFileName);
             }
             else if (event.key.code == sf::Keyboard::Up) {
-                GRAVITY = sf::Vector2f(0.f, -0.04f);
+                GRAVITY = sf::Vector2f(0.f, -0.01f);
             }
             else if (event.key.code == sf::Keyboard::Down) {
-                GRAVITY = sf::Vector2f(0.f, 0.04f);
+                GRAVITY = sf::Vector2f(0.f, 0.01f);
             }
             else if (event.key.code == sf::Keyboard::Left) {
-                GRAVITY = sf::Vector2f(-0.04f, 0.f);
+                GRAVITY = sf::Vector2f(-0.01f, 0.f);
             }
             else if (event.key.code == sf::Keyboard::Right) {
-                GRAVITY = sf::Vector2f(0.04f, 0.f);
+                GRAVITY = sf::Vector2f(0.01f, 0.f);
+            }
+            else if (event.key.code == sf::Keyboard::B) { 
+                Benchmark benchmark;
+                benchmark.executeBenchmark(*this, window); 
             }
             if (event.key.code == sf::Keyboard::Space) { 
                 isSimulationRunning = !isSimulationRunning; 
@@ -68,14 +68,39 @@ void engine::handleEvents()
                 isAttracting = true;
                 attractionPoint = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
             }
+            else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+                isAddingParticles = true;
+            }
+            else if (event.mouseButton.button == sf::Mouse::Right) {
+                isDeletingParticles = true;
+            }
         }
         else if (event.type == sf::Event::MouseButtonReleased) {
             if (event.mouseButton.button == sf::Mouse::Middle) {
                 isAttracting = false;
             }
+            else if (event.mouseButton.button == sf::Mouse::Left){
+                isAddingParticles = false;
+            }
+            else if (event.mouseButton.button == sf::Mouse::Right){
+                isDeletingParticles = false;
+            }
         }
         else if (event.type == sf::Event::MouseMoved && isAttracting) {
             attractionPoint = sf::Vector2f(event.mouseMove.x, event.mouseMove.y);
+        }
+        else if (event.type == sf::Event::MouseMoved && isAddingParticles) {
+            objects.push_back(particle(
+                    sf::Vector2f(event.mouseMove.x, event.mouseMove.y),
+                    sf::Vector2f(0.f, 0.f),
+                    sf::Vector2f(0.f, 0.f),
+                    g_particleRadius,
+                    getColor(frameCount/100)
+                ));
+            particleCount++;
+        }
+        else if (event.type == sf::Event::MouseMoved && isDeletingParticles) {
+            removeParticleAt(sf::Vector2f(event.mouseMove.x, event.mouseMove.y));
         }
     }
 }
@@ -103,7 +128,7 @@ void engine::update()
     for (int i = 0; i < g_collisionCheckCount; i++)
     {
         checkBorders(objects);
-        checkCollisions(objects);
+        checkCollisions(objects, spatialGrid);
     }
 
     physicsTime = pipeTimer.getElapsedTime().asMicroseconds();
@@ -198,4 +223,23 @@ void engine::loadState(const std::string& filename) {
 
     file.close();
     std::cout << "State loaded from " << filename << std::endl;
+}
+
+void engine::clearParticles()
+{
+    particleCount = 0;
+    objects = vector<particle>();
+}
+
+void engine::removeParticleAt(sf::Vector2f position) {
+    for (auto it = objects.begin(); it != objects.end(); ) {
+        float distanceSquared = (it->position.x - position.x) * (it->position.x - position.x) + 
+                              (it->position.y - position.y) * (it->position.y - position.y);
+        if (distanceSquared < it->radius * it->radius) {
+            it = objects.erase(it);
+            particleCount--;
+        } else {
+            ++it;
+        }
+    }
 }
