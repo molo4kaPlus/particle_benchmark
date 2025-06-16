@@ -19,7 +19,7 @@
 
 const int g_windowWidth = 800;
 const int g_windowHeight = 600;
-const int g_fpsLimit = 120;
+const int g_fpsLimit = 1200;
 
 const int g_maximumParticles = 1000;
 const float g_particleRadius = 5.f;
