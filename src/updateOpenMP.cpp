@@ -18,7 +18,7 @@ static sf::Color getColor(float t) {
 
 inline void applyGravity(vector<particle> &objects, sf::Vector2f GRAVITY)
 {
-    #pragma omp parallel for schedule(dynamic) 
+    //#pragma omp parallel for schedule(dynamic) 
     for(auto& obj : objects)
     {
         obj.acceleration += GRAVITY;
