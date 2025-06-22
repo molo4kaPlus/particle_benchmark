@@ -76,7 +76,7 @@ inline void checkCollisions(vector<particle> &objects, SpatialGrid& grid)
         grid.insert(obj);
     }
 
-    #pragma omp parallel for schedule(dynamic) 
+    //#pragma omp parallel for schedule(dynamic) 
     for(size_t i = 0; i < objects.size(); ++i)
     {
         particle &a = objects[i];
@@ -119,7 +119,7 @@ inline void applyAttraction(vector<particle> &objects, const sf::Vector2f& point
 {
     if (!isActive) return;
     
-    #pragma omp parallel for schedule(dynamic) 
+    //#pragma omp parallel for schedule(dynamic) 
     for (auto& obj : objects)
     {
         sf::Vector2f delta = point - obj.position;

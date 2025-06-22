@@ -17,6 +17,7 @@ engine::engine()
     infoText.setCharacterSize(20); 
     infoText.setFillColor(sf::Color::White);
     infoText.setPosition(10, 10); 
+    objects.reserve(g_maximumParticles + 3000);
 }
 
 void engine::mainLoop()
@@ -108,6 +109,10 @@ void engine::handleEvents()
 void engine::update()
 {
     pipeTimer.restart();
+    spatialGrid.clear(); 
+    for (auto& obj : objects) {
+        spatialGrid.insert(obj);
+    }
 
     if (!isSimulationRunning) {
         physicsTime = pipeTimer.getElapsedTime().asMicroseconds();

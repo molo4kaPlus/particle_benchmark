@@ -15,7 +15,12 @@ public:
         : cellSize(cellSize), gridWidth(width / cellSize + 1), gridHeight(height / cellSize + 1) {}
 
     void clear() {
+        for (auto& pair : grid) {
+            pair.second.clear();
+            pair.second.shrink_to_fit();
+            }
         grid.clear();
+        grid.rehash(0);
     }
 
     void insert(particle& p) {
